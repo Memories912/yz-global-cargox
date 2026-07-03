@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { ArrowRight, ChevronDown } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import { Link } from "react-router-dom";
-import { EXPO_OUT, HERO_VIDEO_URL, MAP_IMAGE_URL } from "../constants/colors";
+import { EXPO_OUT, MAP_IMAGE_URL } from "../constants/colors";
 import AnimatedMap from "./AnimatedMap";
 import Header from "./Header";
 import { useLanguage } from "../i18n/LanguageContext";
@@ -15,7 +15,7 @@ export default function Hero() {
   const quickSteps = localizedQuickQuoteSteps[locale];
 
   useEffect(() => {
-    const fallback = window.setTimeout(() => setReady(true), 1200);
+    const fallback = window.setTimeout(() => setReady(true), 350);
     return () => window.clearTimeout(fallback);
   }, []);
 
@@ -26,20 +26,38 @@ export default function Hero() {
   });
 
   return (
-    <section className="relative min-h-screen overflow-hidden bg-[#1A1A2E] text-white">
-      <video
-        className="absolute inset-0 z-0 h-full w-full object-cover"
-        src={HERO_VIDEO_URL}
-        poster={MAP_IMAGE_URL}
-        autoPlay
-        muted
-        loop
-        playsInline
-        onCanPlay={() => setReady(true)}
+    <section className="relative min-h-screen overflow-hidden bg-[#001C24] text-white">
+      {/* 静态地图背景层 */}
+      <div
+        className="absolute inset-0 z-0 bg-cover bg-center opacity-45"
+        style={{ backgroundImage: `url(${MAP_IMAGE_URL})` }}
       />
-      <div className="absolute inset-0 z-[1] bg-[#002A35]/45" />
-      <div className="absolute inset-0 z-[2] bg-gradient-to-r from-[#002A35]/80 via-[#002A35]/30 to-transparent" />
-      <div className="hero-grid absolute inset-0 z-[3] opacity-50" />
+      {/* 呼吸式径向光晕 —— 模拟视频中的动态光照 */}
+      <motion.div
+        className="absolute inset-0 z-[1]"
+        style={{
+          background: "radial-gradient(60% 50% at 30% 40%, rgba(102,130,194,0.28) 0%, rgba(0,42,53,0) 70%)",
+        }}
+        animate={reduced ? {} : { opacity: [0.55, 0.95, 0.55], scale: [1, 1.08, 1] }}
+        transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="absolute inset-0 z-[1]"
+        style={{
+          background: "radial-gradient(50% 45% at 75% 65%, rgba(255,218,0,0.12) 0%, rgba(0,42,53,0) 70%)",
+        }}
+        animate={reduced ? {} : { opacity: [0.4, 0.8, 0.4], scale: [1.05, 1, 1.05] }}
+        transition={{ duration: 11, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
+      />
+      {/* 顶部缓慢漂移光带 —— 模拟视频中的运动感 */}
+      <motion.div
+        className="absolute -inset-x-1/4 top-0 z-[2] h-40 bg-gradient-to-b from-white/8 to-transparent blur-2xl"
+        animate={reduced ? {} : { x: ["-10%", "10%", "-10%"] }}
+        transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <div className="absolute inset-0 z-[3] bg-[#002A35]/55" />
+      <div className="absolute inset-0 z-[4] bg-gradient-to-r from-[#002A35]/85 via-[#002A35]/35 to-transparent" />
+      <div className="hero-grid absolute inset-0 z-[5] opacity-40" />
       <Header overlay />
 
       <div className="section-shell relative z-10 flex min-h-screen flex-col pb-8 pt-28 lg:pb-10 lg:pt-32">
